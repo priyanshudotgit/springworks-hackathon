@@ -184,8 +184,9 @@ app.post('/api/invoices/:id/credit-note', (req, res) => {
   // BUG: status flips to PAID as soon as ANY credit note has been applied,
   // regardless of whether the balance actually reached zero.
   // FIXED
-  if (invoice.balance === 0) {
+  if (invoice.balance <= 0.01) {
     invoice.status = 'PAID';
+    invoice.balance = 0;
   }
 
   res.json(invoice);
