@@ -139,6 +139,7 @@ app.post('/api/invoices/:id/credit-note', (req, res) => {
   // BUG: amount is never checked against the invoice's current balance -
   // a credit note larger than what's left (or larger than the invoice
   // total) is accepted, driving the balance negative.
+  // FIXED
   if (!Number.isFinite(amount) || amount <= 0) {
     return res.status(400).json({
       error: 'Credit note amount must be a positive number'
@@ -158,7 +159,8 @@ app.post('/api/invoices/:id/credit-note', (req, res) => {
 
   // BUG: status flips to PAID as soon as ANY credit note has been applied,
   // regardless of whether the balance actually reached zero.
-  if (invoice.creditNotes.length > 0) {
+  // FIXED
+  if (invoice.balance === 0) {
     invoice.status = 'PAID';
   }
 
