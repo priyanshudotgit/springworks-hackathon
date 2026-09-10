@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Invoice Billing</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Invoice Billing</h1>
+    <p class="subtitle">Line items, GST, and credit notes</p>
+    <div class="tool-actions"><button id="reset-data-btn" type="button" title="Testing utility — not part of the app under test">↺ Reset data</button><a id="spec-link" href="/spec" target="_blank" rel="noopener" title="Testing utility — not part of the app under test">📋 Spec</a><a id="openapi-link" href="/openapi.json" target="_blank" rel="noopener" title="Testing utility — not part of the app under test">📥 API collection</a></div>
+  </header>
+
+  <div id="app-section">
+    <main>
+      <section class="new-invoice">
+        <h2>New Invoice</h2>
+        <form id="new-invoice-form">
+          <input id="new-candidateName" type="text" placeholder="Candidate / company name" />
+          <label class="sez-check"><input id="new-isSez" type="checkbox" /> SEZ (GST exempt)</label>
+          <input id="new-desc" type="text" placeholder="Line item description" />
+          <input id="new-qty" type="number" placeholder="Qty" />
+          <input id="new-rate" type="number" placeholder="Rate" />
+          <button type="submit">Create Invoice</button>
+        </form>
+      </section>
+
+      <table id="invoice-table">
+        <thead>
+          <tr>
+            <th>Candidate / Company</th>
+            <th>Total</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Credit Note</th>
+          </tr>
+        </thead>
+        <tbody id="invoice-body"></tbody>
+      </table>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+  <script>window.SV_APP_ID='09';window.SV_SCOREBOARD='https://sv-qa-scoreboard.onrender.com';</script>
+  <script src="report-widget.js"></script>
+</body>
+</html>
