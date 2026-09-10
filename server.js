@@ -62,7 +62,7 @@ app.get('/api/invoices', (req, res) => {
   const list = req.store.invoices.map((inv) => ({
     id: inv.id,
     candidateName: inv.candidateName,
-    total: inv.subtotal,
+    total: inv.total,
     balance: inv.balance,
     status: inv.status
   }));
@@ -126,6 +126,7 @@ app.post('/api/invoices', (req, res) => {
 
   // BUG: the SEZ carve-out is never applied - GST is charged at 18% even
   // when isSez is true, instead of being waived to 0%.
+  // FIXED
   const gst = isSez
     ? 0
     : Math.round(subtotal * GST_RATE * 100) / 100;
