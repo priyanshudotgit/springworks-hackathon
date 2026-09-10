@@ -2,7 +2,7 @@
 // from an outstanding invoice, but both map to the same "blue" class.
 const STATUS_COLORS = {
   INVOICE_ISSUED: 'blue',
-  PAID: 'blue'
+  PAID: 'gray '
 };
 
 function formatCurrency(n) {
