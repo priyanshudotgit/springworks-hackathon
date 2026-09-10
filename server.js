@@ -129,6 +129,7 @@ app.post('/api/invoices/:id/credit-note', (req, res) => {
   if (!invoice) {
     // BUG: wrong HTTP status - an unknown invoice id should return 404,
     // but this returns 200 with an error-shaped body instead.
+    // FIXED
     return res.status(404).json({ error: 'Invoice not found' });
   }
 
@@ -138,6 +139,18 @@ app.post('/api/invoices/:id/credit-note', (req, res) => {
   // BUG: amount is never checked against the invoice's current balance -
   // a credit note larger than what's left (or larger than the invoice
   // total) is accepted, driving the balance negative.
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return res.status(400).json({
+      error: 'Credit note amount must be a positive number'
+    });
+  }
+
+  // Credit note cannot exceed the current balance
+  if (amount > invoice.balance) {
+    return res.status(400).json({
+      error: 'Credit note amount cannot exceed the invoice balance'
+    });
+  }
 
   const creditNote = { id: req.store.nextCreditNoteId++, amount, date: new Date().toISOString().slice(0, 10) };
   invoice.creditNotes.push(creditNote);
