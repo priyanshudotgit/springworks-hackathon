@@ -411,6 +411,10 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 process.on('unhandledRejection', (e) => console.error('unhandledRejection:', e));
 process.on('uncaughtException', (e) => console.error('uncaughtException:', e));
 
-app.listen(PORT, () => {
-  console.log(`invoice-billing listening on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`invoice-billing listening on port ${PORT}`);
+  });
+}
+
+module.exports = app;
