@@ -64,13 +64,22 @@ async function onCreditNote(btn) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount })
   });
+
+  if (!res.ok) {
+    showToast('Failed to apply credit note');
+    return;
+  }
+
+  await res.json();
+
+  await loadInvoices();
   const updated = await res.json();
 
   // BUG: only this single row's balance cell is patched in place - the
   // rest of the table (and the invoice detail elsewhere) is never
   // reloaded from the server, so other derived UI state goes stale until
   // a manual page refresh.
-  row.querySelector('.balance-cell').textContent = formatCurrency(updated.balance);
+  //FIXED
   showToast('Credit note applied');
 }
 
