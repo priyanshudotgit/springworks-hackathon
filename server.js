@@ -81,25 +81,46 @@ app.post('/api/invoices', (req, res) => {
   if (!candidateName || !candidateName.trim()) {
     return res.status(400).json({ error: 'candidateName is required' });
   }
+
   // BUG: an empty (or missing) items array should be rejected with 400 -
   // an invoice needs at least one line item - but that check is missing,
   // so a zero-value invoice gets created instead.
+  // FIXED
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({
+      error: 'At least one line item is required'
+    });
+  }
 
   let subtotal = 0;
   const lineItems = (items || []).map((item) => {
     // BUG: qty is never validated to be positive, so a negative quantity
     // silently reduces the subtotal instead of being rejected.
+    // FIXED
+    if (!Number.isFinite(item.qty) || item.qty <= 0) {
+      return res.status(400).json({
+        error: 'Quantity must be a positive number'
+      });
+    }
     // BUG: qty/rate are not checked to be numbers - passing a string
     // produces NaN math, which JSON-serializes as `null` in the response
     // instead of a clean 400.
+    // FIXED
+    if (!Number.isFinite(item.rate) || item.rate < 0) {
+      return res.status(400).json({
+        error: 'Rate must be a non-negative number'
+      });
+    }
     // BUG: each line total is rounded to the nearest whole rupee (dropping
     // paise) instead of to 2 decimal places, so line totals don't match
     // qty * rate for fractional rates.
-    const lineTotal = Math.round(item.qty * item.rate);
+    // FIXED
+    const lineTotal = Math.round(item.qty * item.rate * 100) / 100;
     // BUG: subtotal is assigned instead of accumulated, so on a multi-item
     // invoice every earlier item's lineTotal is silently discarded and only
     // the last item ends up counted in the subtotal/GST/total.
-    subtotal = lineTotal;
+    // FIXED
+    subtotal += lineTotal;
     return { desc: item.desc, qty: item.qty, rate: item.rate, lineTotal };
   });
 
