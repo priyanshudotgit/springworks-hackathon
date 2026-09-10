@@ -1,5 +1,6 @@
 // BUG: status badge colors are wrong - PAID should read clearly different
 // from an outstanding invoice, but both map to the same "blue" class.
+// FIXED
 const STATUS_COLORS = {
   INVOICE_ISSUED: 'blue',
   PAID: 'gray '
@@ -85,6 +86,7 @@ async function onCreditNote(btn) {
 
 document.getElementById('new-invoice-form').addEventListener('submit', async (ev) => {
   ev.preventDefault();
+
   const candidateName = document.getElementById('new-candidateName').value;
   const isSez = document.getElementById('new-isSez').checked;
   const desc = document.getElementById('new-desc').value;
@@ -94,13 +96,26 @@ document.getElementById('new-invoice-form').addEventListener('submit', async (ev
   const res = await fetch('/api/invoices', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ candidateName, isSez, items: [{ desc, qty, rate }] })
+    body: JSON.stringify({
+      candidateName,
+      isSez,
+      items: [{ desc, qty, rate }]
+    })
   });
   // BUG: success toast fires regardless of whether the request actually
   // succeeded (e.g. a blank candidateName gets a 400, but the user still
   // sees "Invoice created").
+  // FIXED
+
+  if (!res.ok) {
+    showToast('Failed to create invoice');
+    return;
+  }
+
   showToast('Invoice created');
+
   document.getElementById('new-invoice-form').reset();
+
   await loadInvoices();
 });
 
