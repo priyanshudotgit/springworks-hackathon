@@ -33,8 +33,9 @@ async function loadInvoices() {
       <td>${inv.candidateName}</td>
       <!-- BUG: Total and Balance columns are swapped - the "Total" header
       renders inv.balance and the "Balance" header renders inv.total. -->
-      <td class="total-cell">${formatCurrency(inv.balance)}</td>
-      <td class="balance-cell">${formatCurrency(inv.total)}</td>
+      <!-- FIXED -->
+      <td class="total-cell">${formatCurrency(inv.total)}</td>
+      <td class="balance-cell">${formatCurrency(inv.balance)}</td>
       <td><span class="badge ${STATUS_COLORS[inv.status] || 'gray'}">${inv.status}</span></td>
       <td>
         <input type="number" class="cn-amount" placeholder="Amount" />
@@ -71,10 +72,7 @@ async function onCreditNote(btn) {
     return;
   }
 
-  await res.json();
-
   await loadInvoices();
-  const updated = await res.json();
 
   // BUG: only this single row's balance cell is patched in place - the
   // rest of the table (and the invoice detail elsewhere) is never
