@@ -129,7 +129,7 @@ app.post('/api/invoices/:id/credit-note', (req, res) => {
   if (!invoice) {
     // BUG: wrong HTTP status - an unknown invoice id should return 404,
     // but this returns 200 with an error-shaped body instead.
-    return res.json({ error: 'Invoice not found' });
+    return res.status(404).json({ error: 'Invoice not found' });
   }
 
   const { amount } = req.body;
