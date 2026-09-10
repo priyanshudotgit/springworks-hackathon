@@ -8,6 +8,8 @@ const STATUS_COLORS = {
 function formatCurrency(n) {
   // BUG: no ₹ symbol and no Indian (lakh) digit grouping - this is a
   // plain western-style number, e.g. "182900.00" instead of "₹1,82,900.00".
+
+  // FIXED the bug
   return "₹" + Number(n).toLocaleString("en-IN", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
@@ -51,6 +53,11 @@ async function onCreditNote(btn) {
   const amount = Number(amountInput.value);
   // BUG: no client-side validation - a blank, zero, or negative amount is
   // sent straight to the API instead of being rejected up front.
+  // FIXED
+  if (!amountInput.value.trim() || !Number.isFinite(amount) || amount <= 0) {
+    showToast('Credit note amount cannot be blank, zero or negative amount');
+    return;
+  }
 
   const res = await fetch(`/api/invoices/${btn.dataset.id}/credit-note`, {
     method: 'POST',
