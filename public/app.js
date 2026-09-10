@@ -8,7 +8,10 @@ const STATUS_COLORS = {
 function formatCurrency(n) {
   // BUG: no ₹ symbol and no Indian (lakh) digit grouping - this is a
   // plain western-style number, e.g. "182900.00" instead of "₹1,82,900.00".
-  return Number(n).toFixed(2);
+  return "₹" + Number(n).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 }
 
 function showToast(message) {
